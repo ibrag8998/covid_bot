@@ -8,18 +8,15 @@ import bot_token
 import collect
 
 
-def tapi(method, http_method='get', w=False, *args, **kwargs):
-    params = ''
-    for k, v in kwargs.items():
-        params += f'{k}={v}&'
-    params = params.strip('&')
-
-    r = requests.request(http_method, f'{url}/{method}?{params}').json()
-
-    if w:
-        write_data(r)
-
-    return r
+def tapi(method, w=False, **kwargs):
+    r = requests.get(f'{url}/{method}', params=kwargs)
+    if r.ok:
+        data = r.json()
+        if w:
+            write_data(data)
+        return True
+    else:
+        return False
 
 
 def read_chats():
@@ -69,14 +66,16 @@ def send_messages():
 Будьте осторожны! Берегите себя и свои семьи!\n\n\
 Подписывайся на канал @seytuevru'
     if debug:
-        tapi('sendMessage', chat_id=debug_chat, text=msgtext)
+        chats = [debug_chat]
     else:
         chats = read_chats()
-        sent = []
-        for chat in chats:
-            if chat not in sent:
-                tapi('sendMessage', chat_id=chat, text=msgtext)
-                sent.append(chat)
+    sent = []
+    for chat in chats:
+        if chat not in sent:
+            r = tapi('sendMessage', chat_id=chat, text=msgtext)
+            while not r:
+                r = tapi('sendMessage', chat_id=chat, text=msgtext)
+            sent.append(chat)
 
 
 def update_chats():
