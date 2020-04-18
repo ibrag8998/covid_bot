@@ -14,9 +14,9 @@ def tapi(method, w=False, **kwargs):
         data = r.json()
         if w:
             write_data(data)
-        return True
+        return r
     else:
-        return False
+        return None
 
 
 def read_chats():
