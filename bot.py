@@ -14,7 +14,7 @@ def tapi(method, w=False, **kwargs):
         data = r.json()
         if w:
             write_data(data)
-        return r
+        return data
     else:
         return None
 
