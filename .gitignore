@@ -1,3 +1,6 @@
 **/__pycache__/
-token.py
+bot_token.py
+offset.txt
+chats.txt
+data.json
 

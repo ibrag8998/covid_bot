@@ -4,7 +4,7 @@ from os import listdir, getcwd
 
 import requests
 
-import token
+import bot_token
 import collect
 
 
@@ -51,6 +51,8 @@ def write_offset(offset):
 
 def send_messages():
     data, diff = collect.collect_data()
+    while data is None:
+        data, diff = collect.collect_data()
     msgtext =  f'Дата: {collect.get_date()}\n\n\
 Заражений:\n\
 - Мир: {data[0]} (%2B{diff[0]})\n\
@@ -65,7 +67,6 @@ def send_messages():
 - Россия: {data[4]} (%2B{diff[4]})\n\
 - Дагестан: {data[7]} (%2B{diff[7]})\n\n\
 Будьте осторожны! Берегите себя и свои семьи!\n\n\
-Источник: TrackCorona\n\
 Подписывайся на канал @seytuevru'
     if debug:
         tapi('sendMessage', chat_id=debug_chat, text=msgtext)
@@ -99,9 +100,9 @@ def write_data(data):
         dump(data, f, ensure_ascii=False, indent=2)
 
 
-url = f'https://api.telegram.org/bot{token.token}'
+url = f'https://api.telegram.org/bot{bot_token.token}'
 debug_chat = '-317873756'
-debug = False
+debug = True
 
 update_chats()
 send_messages()

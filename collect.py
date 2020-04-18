@@ -46,7 +46,7 @@ def collect_ru_dag():
         r = s.get(u + '&csrfToken=' + csrf_token)
         data = r.json()['data']['items']
     except:
-        return None
+        return None, None
     russia = get_russia(data)
     dagestan = get_dagestan(data)
     return russia, dagestan
@@ -67,15 +67,21 @@ def collect_world():
 
 
 def calc_diff(actual, prev):
-    return [actual[i] - prev[i] for i in range(9)]
+    return [max(0, actual[i] - prev[i]) for i in range(9)]
 
 
 def collect_data():
     world = collect_world()
     ru, dag = collect_ru_dag()
+    if world is None or ru is None:
+        return None, None
     data = world + ru + dag
     prev_data = read()
     diff = calc_diff(data, prev_data)
     write(data)
     return data, diff
+
+
+if __name__ == '__main__':
+    collect_data()
 
